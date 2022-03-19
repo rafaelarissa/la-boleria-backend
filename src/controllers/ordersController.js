@@ -6,9 +6,9 @@ export async function setOrders(req, res) {
   try {
     
     await connection.query(`
-    INSERT INTO clients ("clientId", "cakeId", quantity, "totalPrice")
+    INSERT INTO clients ("clientId", "cakeId", quantity, "createdAt", "totalPrice")
     VALUES ($1, $2, $3, $4)
-    `, [clientId, cakeId, quantity, totalPrice]);
+    `, [clientId, cakeId, quantity, new Date(), totalPrice]);
     
     res.sendStatus(201);
   } catch (error) {
