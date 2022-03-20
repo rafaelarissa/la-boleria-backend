@@ -5,8 +5,8 @@ export async function setOrders(req, res) {
 
   try {
     await connection.query(`
-    INSERT INTO clients ("clientId", "cakeId", quantity, "createdAt", "totalPrice")
-    VALUES ($1, $2, $3, $4)
+    INSERT INTO orders ("clientId", "cakeId", quantity, "createdAt", "totalPrice")
+    VALUES ($1, $2, $3, $4, $5)
     `, [clientId, cakeId, quantity, new Date(), totalPrice]);
     
     res.sendStatus(201);
