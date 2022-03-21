@@ -131,8 +131,6 @@ export async function getOrders(req, res) {
 
 export async function getOrdersById(req, res) {
   const { id } = req.params;
-  console.log(id);
-  console.log(parseInt(id));
 
   if (!parseInt(id)) {
     return res.sendStatus(400);
