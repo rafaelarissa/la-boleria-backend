@@ -30,10 +30,12 @@ export async function getOrderPerClient(req, res) {
         orders.quantity,
         orders."createdAt",
         orders."totalPrice",
-        cakes.name AS "cakeName"
+        cakes.name AS "cakeName",
+        flavours.name AS "flavour"
       FROM clients
         JOIN orders ON orders."clientId"=clients.id
         JOIN cakes ON cakes.id=orders."cakeId"
+        JOIN flavours ON flavours.id=cakes."flavourId"
       WHERE clients.id=$1
     `,
       [id]

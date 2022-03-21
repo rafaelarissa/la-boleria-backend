@@ -131,9 +131,11 @@ export async function getOrders(req, res) {
 
 export async function getOrdersById(req, res) {
   const { id } = req.params;
+  console.log(id);
+  console.log(parseInt(id));
 
-  if (isNaN(parseInt(id))) {
-    return res.status(400);
+  if (!parseInt(id)) {
+    return res.sendStatus(400);
   }
 
   try {
