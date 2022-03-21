@@ -84,14 +84,13 @@ export async function getOrders(req, res) {
     const params = [];
     let where = "";
 
+    const { rowCount: existingOrder } = await connection.query(
+      `
+      SELECT "createdAt" FROM orders WHERE "createdAt"=$1
+    `,
+      [date]
+    );
     if (date && !existingOrder) {
-      const { rowCount: existingOrder } = await connection.query(
-        `
-        SELECT "createdAt" FROM orders WHERE "createdAt"=$1
-      `,
-        [date]
-      );
-
       return res.status(404).send([]);
     }
 
