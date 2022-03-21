@@ -11,6 +11,7 @@ function mapOrdersArrayToObject(row) {
     cakePrice,
     cakeDescription,
     cakeImage,
+    flavourName,
     createdAt,
     quantity,
     totalPrice,
@@ -29,6 +30,7 @@ function mapOrdersArrayToObject(row) {
       price: cakePrice,
       description: cakeDescription,
       image: cakeImage,
+      flavour: flavourName,
     },
     createdAt,
     quantity,
@@ -61,10 +63,10 @@ export async function setOrders(req, res) {
     await connection.query(
       `
     INSERT INTO 
-      orders ("clientId", "cakeId", quantity, NOW(), "totalPrice")
-    VALUES ($1, $2, $3, $4, $5)
+      orders ("clientId", "cakeId", quantity, "createdAt", "totalPrice")
+    VALUES ($1, $2, $3, NOW(), $4)
     `,
-      [clientId, cakeId, quantity, createdAt, totalPrice]
+      [clientId, cakeId, quantity, totalPrice]
     );
 
     res.sendStatus(201);
@@ -89,7 +91,7 @@ export async function getOrders(req, res) {
       [date]
     );
     if (!existingOrder) {
-      res.status(404).send([]);
+      return res.status(404).send([]);
     }
 
     if (date) {
@@ -106,11 +108,13 @@ export async function getOrders(req, res) {
         text: `
         SELECT 
           clients.*,
-          cakes.*,
+          cakes.id, cakes.name, cakes.price, cakes.description, cakes.image,
+          flavours.name AS flavourName,
           orders."createdAt", orders.quantity, orders."totalPrice"
         FROM orders
           JOIN clients ON clients.id=orders."clientId"
           JOIN cakes ON cakes.id=orders."cakeId"
+          JOIN flavours ON flavours.id=cakes."flavourId"
         ${where}
       `,
         rowMode: "array",
@@ -138,11 +142,13 @@ export async function getOrdersById(req, res) {
         text: `
         SELECT 
           clients.*,
-          cakes.*,
+          cakes.id, cakes.name, cakes.price, cakes.description, cakes.image,
+          flavours.name AS flavourName,
           orders."createdAt", orders.quantity, orders."totalPrice"
         FROM orders
           JOIN clients ON clients.id=orders."clientId"
           JOIN cakes ON cakes.id=orders."cakeId"
+          JOIN flavours ON flavours.id=cakes."flavourId"
         WHERE orders.id=$1`,
         rowMode: "array",
       },
@@ -153,5 +159,8 @@ export async function getOrdersById(req, res) {
     }
 
     res.status(200).send(result.rows.map(mapOrdersArrayToObject));
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
 }
